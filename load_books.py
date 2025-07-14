@@ -1,14 +1,14 @@
 import os
 import django
-from datetime import date
 from random import randint
+from faker import Faker
+from library.models import Book, Category  # ✅ Import both
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Library_Management.settings')
 django.setup()
 
-from library.models import Book, Category  # ✅ Import Category model too
+fake = Faker()
 
-# Sample Data
 books_data = {
     'Coding': [
         "Python Crash Course", "Fluent Python", "Eloquent JavaScript", "Clean Code", "Cracking the Coding Interview",
@@ -36,19 +36,16 @@ books_data = {
     ]
 }
 
-# Load books into DB
 count = 0
 for category_name, titles in books_data.items():
-    # ✅ Get or create Category object
     category_obj, _ = Category.objects.get_or_create(name=category_name)
-    
     for title in titles:
         Book.objects.create(
             title=title,
-            author=f"Author of {title}",
-            category=category_obj,  # ✅ Use Category instance, not string
-            description=f"{title} is a popular book for {category_name}.",
-            total_copies=randint(5, 15)
+            author=fake.name(),
+            category=category_obj,
+            isbn=fake.unique.isbn13(separator=''),
+            available_copies=randint(5, 15)
         )
         count += 1
 
