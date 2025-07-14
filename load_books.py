@@ -6,7 +6,7 @@ from random import randint
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Library_Management.settings')
 django.setup()
 
-from library.models import Book  # Update this if your Book model is elsewhere
+from library.models import Book, Category  # ✅ Import Category model too
 
 # Sample Data
 books_data = {
@@ -36,16 +36,19 @@ books_data = {
     ]
 }
 
-# Populate the DB
+# Load books into DB
 count = 0
-for category, titles in books_data.items():
+for category_name, titles in books_data.items():
+    # ✅ Get or create Category object
+    category_obj, _ = Category.objects.get_or_create(name=category_name)
+    
     for title in titles:
         Book.objects.create(
             title=title,
-            author="Author of " + title,
-            category=category,
-            description=f"{title} is a popular book for {category}.",
-            total_copies=randint(5, 15)  # Replace with quantity or available_copies if your model uses those
+            author=f"Author of {title}",
+            category=category_obj,  # ✅ Use Category instance, not string
+            description=f"{title} is a popular book for {category_name}.",
+            total_copies=randint(5, 15)
         )
         count += 1
 
