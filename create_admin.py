@@ -6,13 +6,17 @@ django.setup()
 
 from django.contrib.auth.models import User
 
-# Your actual superuser details
+# Change these details to your desired new login
 username = "Krishna"
-email = "imks9219@gmail.com"
-password = "Kris1235"
+email = "krishnashukla8687@gmail.com"
+password = "Kris1236"
 
-if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username=username, email=email, password=password)
+try:
+    user = User.objects.get(username=username)
+    user.set_password(password)
+    user.email = email
+    user.save()
+    print(f"✅ Password for '{username}' reset successfully.")
+except User.DoesNotExist:
+    User.objects.create_superuser(username, email, password)
     print(f"✅ Superuser '{username}' created.")
-else:
-    print(f"ℹ️ Superuser '{username}' already exists.")
