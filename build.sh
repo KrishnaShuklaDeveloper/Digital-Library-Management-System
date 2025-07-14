@@ -12,4 +12,5 @@ python manage.py collectstatic --noinput
 # Create a superuser (only if it doesn't exist)
 python create_admin.py
 
-python3 load_books.py 
+# Load books
+python3 load_books.py
