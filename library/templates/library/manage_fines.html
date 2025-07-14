@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Fines</title>
+</head>
+<body>
+    <h2>Manage Fines</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Member</th>
+                <th>Fine Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fine in fines %}
+                <tr>
+                    <td>{{ fine.transaction.id }}</td>
+                    <td>{{ fine.transaction.member.username }}</td>
+                    <td>{{ fine.amount }}</td>
+                    <td>
+                        <a href="{% url 'calculate_fine' fine.transaction.id %}">Calculate Fine</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

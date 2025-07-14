@@ -1,0 +1,22 @@
+{% extends 'library/base.html' %}
+{% block content %}
+<h2>Transaction List</h2>
+<table>
+    <tr>
+        <th>Book</th>
+        <th>Member</th>
+        <th>Issued Date</th>
+        <th>Return Date</th>
+        <th>Status</th>
+    </tr>
+    {% for transaction in transactions %}
+    <tr>
+        <td>{{ transaction.book.title }}</td>
+        <td>{{ transaction.member.user.username }}</td>
+        <td>{{ transaction.issued_date }}</td>
+        <td>{{ transaction.return_date }}</td>
+        <td>{% if transaction.is_returned %}Returned{% else %}Pending{% endif %}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'library/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4 text-center">Library Reports Dashboard</h2>
+
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 bg-primary text-white rounded">
+                <h5>Total Books</h5>
+                <h3>{{ total_books|default:"0" }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 bg-success text-white rounded">
+                <h5>Total Members</h5>
+                <h3>{{ total_members|default:"0" }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 bg-warning text-dark rounded">
+                <h5>Books Issued</h5>
+                <h3>{{ total_issued_books|default:"0" }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4 class="mb-3">Issued vs Returned Books</h4>
+    <canvas id="booksChart" width="600" height="300"></canvas>
+
+    <style>
+      #booksChart {
+        max-width: 600px;
+        max-height: 300px;
+        margin: 0 auto;
+        display: block;
+      }
+    </style>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('booksChart').getContext('2d');
+
+    // Parse Django variables safely with default fallback
+    const issued = parseInt("{{ total_issued_books|default:'0' }}");
+    const returned = parseInt("{{ total_returned_books|default:'0' }}");
+
+    const booksChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Issued Books', 'Returned Books'],
+            datasets: [{
+                label: 'Number of Books',
+                data: [issued, returned],
+                backgroundColor: [
+                    'rgba(255, 159, 64, 0.7)',  // Orange
+                    'rgba(54, 162, 235, 0.7)'   // Blue
+                ],
+                borderColor: [
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Home | Library System</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <style>
+    :root {
+      --bg-light: #f8f9fa;
+      --bg-dark: #1e1e2f;
+      --text-light: #333;
+      --text-dark: #f1f1f1;
+      --primary: #4f46e5;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      margin: 0;
+      padding-bottom: 80px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .navbar {
+      background-color: var(--primary);
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar .navbar-brand {
+      font-weight: bold;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .nav-links a, .nav-links button {
+      color: white;
+      text-decoration: none;
+      margin-left: 10px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid white;
+      background: none;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover, .nav-links button:hover {
+      background-color: white;
+      color: var(--primary);
+    }
+
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      margin: 0 10px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .welcome-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-text {
+      max-width: 60%;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+
+    .search-form input {
+      padding: 8px;
+      width: 200px;
+    }
+
+    .search-form button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table th, table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: white;
+    }
+
+    .bg-success { background-color: green; }
+    .bg-danger { background-color: red; }
+
+    .fab-container {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .fab-main {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      font-size: 28px;
+      text-align: center;
+      line-height: 55px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .fab-options {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: flex-end;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .fab-options.show {
+      display: flex;
+    }
+
+    .fab-options a {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      line-height: 50px;
+      border-radius: 50%;
+      text-decoration: none;
+      font-size: 20px;
+      position: relative;
+    }
+
+    .fab-options a[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      right: 60px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 1;
+      pointer-events: none;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      margin-top: 10px;
+      border: none;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary {
+      background-color: gray;
+    }
+
+    .btn-outline {
+      border: 1px solid #333;
+      background: none;
+      color: #333;
+    }
+
+    .d-flex { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    @media screen and (max-width: 768px) {
+      .welcome-text {
+        max-width: 100%;
+      }
+      .search-form {
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 10px;
+      }
+      .search-form input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="navbar-brand">📖 Library Management</div>
+  <div class="nav-links">
+    <button onclick="toggleDarkMode()" title="Toggle Theme">🌓</button>
+    {% if member.profile_pic %}
+      <img src="{{ member.profile_pic.url }}" alt="Profile" class="profile-pic" />
+    {% endif %}
+    <a href="{% url 'book_list' %}">Books</a>
+    <a href="{% url 'transactions' %}">Transactions</a>
+    <a href="{% url 'logout' %}">Logout</a>
+  </div>
+</div>
+
+<!-- Welcome + Search Section -->
+<div class="container welcome-section">
+  <div class="welcome-text">
+    <h2>Welcome, {{ user.username }}! 👋</h2>
+    <p>Here you can manage your books, transactions, fines, and membership details.</p>
+  </div>
+  <form method="GET" action="{% url 'search_books' %}" class="search-form">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search by Title, Author, or Category">
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+<!-- Issued Books -->
+<div class="container">
+  <h3>📖 Issued Books</h3>
+  {% if transactions %}
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Issued</th>
+          <th>Due</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in transactions %}
+        <tr>
+          <td>{{ transaction.book.title }}</td>
+          <td>{{ transaction.issue_date }}</td>
+          <td>{{ transaction.return_date }}</td>
+          <td>
+            {% if transaction.return_date < today %}
+              <span class="badge bg-danger">Overdue</span>
+            {% else %}
+              <span class="badge bg-success">{{ transaction.is_returned|yesno:"Returned,Pending" }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>You have not issued any books yet.</p>
+  {% endif %}
+</div>
+
+<!-- Pending Fines -->
+<div class="container">
+  <h3>💳 Pending Fines</h3>
+  {% if fines %}
+    {% for fine in fines %}
+      {% if not fine.is_paid %}
+      <div class="d-flex">
+        <p>Fine Amount: ₹{{ fine.fine_amount }}</p>
+        <a href="{% url 'pay_fine' fine.id %}" class="btn">Pay Now</a>
+      </div>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <p>No pending fines.</p>
+  {% endif %}
+</div>
+
+<!-- Membership Details -->
+<div class="container">
+  <h3>🎟️ Membership Details</h3>
+  <p><strong>Type:</strong> {{ member.membership_type }}</p>
+  <p><strong>Valid Until:</strong> {{ member.membership_end }}</p>
+  <div class="d-flex">
+    <a href="{% url 'renew_membership' %}" class="btn">Renew</a>
+    <a href="{% url 'update_profile' %}" class="btn btn-secondary">Update Profile</a>
+  </div>
+</div>
+
+<!-- Reports -->
+<div class="container">
+  <h3>📑 Reports & History</h3>
+  <div class="d-flex">
+    <a href="{% url 'issued_books_history' %}" class="btn btn-outline">Issued & Returned</a>
+    <a href="{% url 'fine_history' %}" class="btn btn-outline">Fine History</a>
+    <a href="{% url 'reports' %}" class="btn btn-outline">Reports</a>
+  </div>
+</div>
+
+<!-- Floating FAB Menu -->
+<div class="fab-container">
+  <div class="fab-options" id="fabMenu">
+    <a href="{% url 'request_book' book_id=0 %}" data-tooltip="Request Book">➕</a>
+    <a href="{% url 'return_book' transaction_id=0 %}" data-tooltip="Return Book">🔁</a>
+    <a href="{% url 'book_list' %}" data-tooltip="View Books">📚</a>
+  </div>
+  <div class="fab-main" onclick="toggleFAB()">＋</div>
+</div>
+
+<!-- Scripts -->
+<script>
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+  }
+
+  function toggleFAB() {
+    const menu = document.getElementById('fabMenu');
+    menu.classList.toggle('show');
+  }
+</script>
+
+</body>
+</html>

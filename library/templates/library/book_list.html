@@ -1,0 +1,83 @@
+{% extends 'library/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📚 Available Books</h2>
+
+    <!-- Add New Book Button -->
+    <div class="text-end mb-3">
+        <a href="{% url 'add_book' %}" class="btn btn-success">
+            ➕ Add New Book
+        </a>
+    </div>
+
+    <!-- Search Form -->
+    <form method="GET" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search books by title, author, or category" value="{{ query }}">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for book in page_obj.object_list %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text">
+                        <strong>Author:</strong> {{ book.author }}<br>
+                        <strong>Category:</strong> {{ book.category }}<br>
+                        <strong>ISBN:</strong> {{ book.isbn }}<br>
+                        <strong>Available Copies:</strong> {{ book.available_copies }}
+                    </p>
+                </div>
+                <div class="card-footer text-center">
+                    {% if book.available_copies > 0 %}
+                        <a href="{% url 'issue_book' book.id %}" class="btn btn-primary btn-sm">Issue Book</a>
+                    {% else %}
+                        <button class="btn btn-secondary btn-sm" disabled>Out of Stock</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No books found.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">&laquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}" aria-label="Next">&raquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <div class="dashboard text-center mt-5">
+        <h2>Welcome, Admin</h2>
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger mt-3">Logout</a>
+    </div>
+{% endblock %}
