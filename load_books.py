@@ -2,13 +2,16 @@ import os
 import django
 from random import randint
 from faker import Faker
-from library.models import Book, Category  # ✅ Import both
 
+# Setup Django environment before importing models
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Library_Management.settings')
 django.setup()
 
+from library.models import Book, Category  # ✅ Safe now after setup()
+
 fake = Faker()
 
+# Book categories and titles
 books_data = {
     'Coding': [
         "Python Crash Course", "Fluent Python", "Eloquent JavaScript", "Clean Code", "Cracking the Coding Interview",
@@ -36,16 +39,17 @@ books_data = {
     ]
 }
 
+# Load books
 count = 0
-for category_name, titles in books_data.items():
-    category_obj, _ = Category.objects.get_or_create(name=category_name)
+for cat_name, titles in books_data.items():
+    category_obj, _ = Category.objects.get_or_create(name=cat_name)
     for title in titles:
         Book.objects.create(
             title=title,
             author=fake.name(),
             category=category_obj,
-            isbn=fake.unique.isbn13(separator=''),
-            available_copies=randint(5, 15)
+            isbn=fake.isbn13(),
+            available_copies=randint(3, 15)
         )
         count += 1
 
