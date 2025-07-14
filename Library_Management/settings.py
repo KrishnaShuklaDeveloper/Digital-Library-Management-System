@@ -93,6 +93,7 @@ STATIC_URL = '/staticfiles/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles"),
 ]
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Media Files (for Book Images, etc.)
 MEDIA_URL = '/media/'
