@@ -2,16 +2,16 @@ import os
 import django
 from random import randint
 from faker import Faker
+from django.db.utils import OperationalError
 
 # Setup Django environment before importing models
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Library_Management.settings')
 django.setup()
 
-from library.models import Book, Category  # ✅ Safe now after setup()
+from library.models import Book, Category
 
 fake = Faker()
 
-# Book categories and titles
 books_data = {
     'Coding': [
         "Python Crash Course", "Fluent Python", "Eloquent JavaScript", "Clean Code", "Cracking the Coding Interview",
@@ -39,18 +39,24 @@ books_data = {
     ]
 }
 
-# Load books
-count = 0
-for cat_name, titles in books_data.items():
-    category_obj, _ = Category.objects.get_or_create(name=cat_name)
-    for title in titles:
-        Book.objects.create(
-            title=title,
-            author=fake.name(),
-            category=category_obj,
-            isbn=fake.isbn13(),
-            available_copies=randint(3, 15)
-        )
-        count += 1
+try:
+    count = 0
+    for cat_name, titles in books_data.items():
+        category_obj, _ = Category.objects.get_or_create(name=cat_name)
+        for title in titles:
+            Book.objects.get_or_create(
+                title=title,
+                defaults={
+                    "author": fake.name(),
+                    "category": category_obj,
+                    "isbn": fake.isbn13(),
+                    "available_copies": randint(3, 15)
+                }
+            )
+            count += 1
 
-print(f"✅ {count} books loaded into the database successfully.")
+    print(f"✅ {count} books loaded into the database successfully.")
+
+except OperationalError as e:
+    print("❌ Could not load books. Ensure migrations have been applied.")
+    print(f"Error: {e}")
