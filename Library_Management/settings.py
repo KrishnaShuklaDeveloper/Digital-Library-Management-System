@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'admin_panel',
     'library',
+    'storages',
     'crispy_forms',  # For better form styling
     'crispy_bootstrap5',  # Bootstrap 5 support for Django forms
 ]
@@ -98,9 +99,17 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 
 
-# Media Files (for Book Images, etc.)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# ✅ AWS S3 Media Settings
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'ap-south-1')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
 
 # Email Settings for Notifications
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
