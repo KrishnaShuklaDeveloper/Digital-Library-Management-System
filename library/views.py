@@ -68,15 +68,23 @@ def admin_home(request):
 @login_required
 def user_home(request):
     user = request.user
+
+    # Get or create the Member instance linked to the logged-in user
     member, _ = Member.objects.get_or_create(user=user)
+
+    # All active transactions (books currently issued to the user)
     transactions = Transaction.objects.filter(member=member, is_returned=False)
-    fines = Fine.objects.filter(member=member, is_paid=False)
+
+    # All unpaid fines linked via transaction → member
+    fines = Fine.objects.filter(transaction__member=member, is_paid=False)
+
     return render(request, 'library/user_home.html', {
         'member': member,
         'transactions': transactions,
         'fines': fines,
         'today': now().date()
     })
+
 
 
 @login_required
