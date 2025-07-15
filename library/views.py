@@ -130,8 +130,9 @@ def update_profile(request):
         user.email = request.POST.get('email')
         member.membership_type = request.POST.get('membership_type')
 
+        # ✅ Use correct field name here
         if 'profile_image' in request.FILES:
-            member.profile_image = request.FILES['profile_image']
+            member.profile_pic = request.FILES['profile_image']
 
         user.save()
         member.save()
@@ -139,6 +140,7 @@ def update_profile(request):
         return redirect('user_home')
 
     return render(request, 'library/update_profile.html', {'member': member})
+
 
 
 # 🔹 Member Management
