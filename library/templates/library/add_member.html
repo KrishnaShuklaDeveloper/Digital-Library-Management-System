@@ -74,7 +74,7 @@
 
   <div class="container-fluid">
 
-    <!-- Left Section: Stylish Design -->
+    <!-- Left Section -->
     <div class="left-section">
       <div>
         <h1>Welcome to Library Management</h1>
@@ -82,12 +82,11 @@
       </div>
     </div>
 
-    <!-- Right Section: Form Container -->
+    <!-- Right Section -->
     <div class="right-section">
       <div class="form-container">
         <h2 class="text-center">Add New Member</h2>
 
-        <!-- Display Success and Error Messages -->
         {% if messages %}
           {% for message in messages %}
             <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
@@ -107,8 +106,8 @@
           </div>
         {% endif %}
 
-        <!-- Form Section -->
-        <form method="POST">
+        <!-- Form Start -->
+        <form method="POST" enctype="multipart/form-data">
           {% csrf_token %}
 
           <div class="mb-3">
@@ -126,10 +125,14 @@
             <input type="password" name="password" id="id_password" class="form-control" placeholder="Enter Password" required>
           </div>
 
+          <div class="mb-3">
+            <label for="id_profile_image" class="form-label">Profile Image</label>
+            <input type="file" name="profile_image" id="id_profile_image" class="form-control" accept="image/*">
+          </div>
+
           <button type="submit" class="btn btn-primary w-100">Add Member</button>
         </form>
 
-        <!-- Back to Members Button -->
         <a href="{% url 'manage_members' %}" class="btn btn-secondary w-100 mt-2">Back to Members</a>
       </div>
     </div>
