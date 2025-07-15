@@ -156,7 +156,8 @@ def add_member(request):
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
-        membership_type = request.POST.get('membership_type', 'standard')
+        profile_image = request.FILES.get('profile_image')  # ← New
+        membership_type = request.POST.get('membership_type', 'Standard')
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists!")
@@ -167,11 +168,17 @@ def add_member(request):
             return redirect('add_member')
 
         user = User.objects.create_user(username=username, email=email, password=password)
-        Member.objects.create(user=user, membership_type=membership_type)
+        Member.objects.create(
+            user=user,
+            membership_type=membership_type,
+            profile_pic=profile_image  # ← Save profile image
+        )
+
         messages.success(request, "Member added successfully!")
         return redirect('manage_members')
 
     return render(request, 'library/add_member.html')
+
 
 
 @login_required
