@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Home | Library System</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
   <style>
     :root {
       --bg-light: #f8f9fa;
@@ -267,9 +268,7 @@
   <div class="navbar-brand">📖 Library Management</div>
   <div class="nav-links">
     <button onclick="toggleDarkMode()" title="Toggle Theme">🌓</button>
-    {% if member and member.profile_pic %}
-      <img src="{{ member.profile_pic.url }}" alt="Profile" class="profile-pic" />
-    {% endif %}
+    <img src="{% if member and member.profile_pic %}{{ member.profile_pic.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}" alt="Profile" class="profile-pic" />
     <a href="{% url 'book_list' %}">Books</a>
     <a href="{% url 'transactions' %}">Transactions</a>
     <a href="{% url 'logout' %}">Logout</a>
@@ -283,7 +282,7 @@
     <p>Here you can manage your books, transactions, fines, and membership details.</p>
   </div>
   <form method="GET" action="{% url 'search_books' %}" class="search-form">
-    <input type="text" name="q" value="{{ query }}" placeholder="Search by Title, Author, or Category">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search by Title, Author, or Category" aria-label="Search Books">
     <button type="submit">Search</button>
   </form>
 </div>
@@ -371,9 +370,19 @@
   <div class="fab-main" onclick="toggleFAB()">＋</div>
 </div>
 
+<!-- Dark Mode + FAB Script -->
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      document.body.classList.add("dark-mode");
+    }
+  });
+
   function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
+    const isDark = document.body.classList.contains("dark-mode");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
   }
 
   function toggleFAB() {
