@@ -27,7 +27,7 @@
 
         <div class="mb-3">
             <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" value="{{ member.user.email }}" required>
+            <input type="email" name="email" class="form-control" value="{{ member.user.email|default_if_none:'' }}" required>
         </div>
 
         <div class="mb-3">
@@ -55,15 +55,17 @@
     </form>
 </div>
 
-<!-- ✅ Live Preview Script -->
+<!-- ✅ Live Preview & Dark Mode Script -->
 <script>
     function previewImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
         const image = document.getElementById('imagePreview');
-        image.src = URL.createObjectURL(event.target.files[0]);
+        image.src = URL.createObjectURL(file);
         image.classList.remove('d-none');
     }
 
-    // 🌙 Dark Mode Toggle Logic
+    // 🌙 Dark Mode Toggle Logic (basic persistence)
     const toggle = document.getElementById("themeToggle");
     const container = document.getElementById("profile-container");
     const form = document.getElementById("profile-form");
@@ -74,6 +76,16 @@
         container.classList.toggle("bg-dark");
         form.classList.toggle("bg-secondary");
         form.classList.toggle("text-white");
+
+        // Optionally store theme in localStorage
+        localStorage.setItem("darkMode", toggle.checked ? "enabled" : "disabled");
+    });
+
+    // Load saved theme preference
+    window.addEventListener("DOMContentLoaded", () => {
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        toggle.checked = isDark;
+        if (isDark) toggle.dispatchEvent(new Event("change"));
     });
 </script>
 {% endblock %}
