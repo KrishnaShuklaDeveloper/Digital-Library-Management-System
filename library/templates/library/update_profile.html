@@ -33,16 +33,16 @@
         <div class="mb-3">
             <label class="form-label">Membership Type</label>
             <select name="membership_type" class="form-select">
-                <option value="standard" {% if member.membership_type == "standard" %}selected{% endif %}>Standard</option>
-                <option value="premium" {% if member.membership_type == "premium" %}selected{% endif %}>Premium</option>
+                <option value="Standard" {% if member.membership_type == "Standard" %}selected{% endif %}>Standard</option>
+                <option value="Premium" {% if member.membership_type == "Premium" %}selected{% endif %}>Premium</option>
             </select>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Profile Image</label>
-            {% if member.profile_image %}
+            {% if member.profile_pic %}
                 <div class="mb-2">
-                    <img id="currentImage" src="{{ member.profile_image.url }}" alt="Current Image" class="img-thumbnail" style="max-height: 150px;">
+                    <img id="currentImage" src="{{ member.profile_pic.url }}" alt="Current Image" class="img-thumbnail" style="max-height: 150px;">
                 </div>
             {% endif %}
             <input type="file" name="profile_image" class="form-control" accept="image/*" onchange="previewImage(event)">
